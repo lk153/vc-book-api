@@ -122,7 +122,6 @@ const orderSchema = new mongoose.Schema({
 // Indexes
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
-orderSchema.index({ orderNumber: 1 });
 
 // Generate order number
 orderSchema.pre('save', async function(next) {
