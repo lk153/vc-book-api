@@ -6,19 +6,19 @@ A production-ready RESTful API built with scalability and maintainability in min
 
 ### Layered Architecture
 ```
-├── Controllers    → Handle HTTP requests/responses
-├── Services       → Business logic layer
-├── Repositories   → Data access layer
-├── Routes         → API endpoint definitions
-├── Middleware     → Request processing
-├── Utils          → Helper functions
-└── Config         → Configuration management
+├── controllers    → Handle HTTP requests/responses
+├── services       → Business logic layer
+├── repositories   → Data access layer
+├── routes         → API endpoint definitions
+├── middleware     → Request processing
+├── utils          → Helper functions
+└── config         → Configuration management
 ```
 
 ## 📁 Project Structure
 
 ```
-book-order-api/
+vc-book-api/
 ├── server.js                 # Application entry point
 ├── package.json
 ├── .env.example
@@ -62,3 +62,59 @@ book-order-api/
         ├── order.model.js
         └── ...
 ```
+
+## 📚 API Documentation
+
+### Access Swagger UI
+Once the server is running, access the interactive API documentation at:
+```
+http://localhost:3000/api-docs
+```
+
+### Features:
+- ✅ Interactive API testing
+- ✅ Request/Response examples
+- ✅ Schema definitions
+- ✅ Try it out functionality
+- ✅ Export OpenAPI spec
+
+### Download OpenAPI Spec
+```
+http://localhost:3000/api-docs.json
+```
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Setup Environment
+```bash
+cp .env.example .env
+# Edit .env with your MongoDB URI
+```
+
+### 3. Start Server
+```bash
+npm run dev
+```
+
+### 4. Access Documentation
+Open browser: `http://localhost:3000/api-docs`
+
+## 📖 API Endpoints Overview
+
+### Books
+- `GET /api/v1/books` - Get all books (with filters)
+- `GET /api/v1/books/:id` - Get book details
+- `POST /api/v1/books` - Create new book
+- `PUT /api/v1/books/:id` - Update book
+- `DELETE /api/v1/books/:id` - Delete book
+
+### Cart
+- `GET /api/v1/cart/:userId` - Get cart
+- `POST /api/v1/cart/add` - Add to cart
+- `PUT /api/v1/cart/update` - Update cart
+- `DELETE /api/v1/cart/:userId/items/:bookId` - Remove
