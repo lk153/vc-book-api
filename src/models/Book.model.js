@@ -13,18 +13,6 @@ const bookSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Author name cannot be more than 100 characters']
   },
-  isbn: {
-    type: String,
-    unique: true,
-    sparse: true,
-    trim: true,
-    validate: {
-      validator: function(v) {
-        return !v || /^(ISBN(?:-1[03])?:?\s*)?(?:\d[\d -]{8,16}[\dX])$/.test(v);
-      },
-      message: props => `${props.value} is not a valid ISBN!`
-    }
-  },
   description: {
     type: String,
     maxlength: [2000, 'Description cannot be more than 2000 characters']
@@ -44,27 +32,13 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     enum: {
-      values: ['Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Programming', 'Business', 'History', 'Biography', 'Other'],
+      values: ['Self-Help', 'Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Programming', 'Business', 'History', 'Biography', 'Other'],
       message: '{VALUE} is not a valid category'
     }
   },
-  publisher: {
+  image: {
     type: String,
-    trim: true
-  },
-  publishedDate: {
-    type: Date
-  },
-  pages: {
-    type: Number,
-    min: [1, 'Pages must be at least 1']
-  },
-  language: {
-    type: String,
-    default: 'English'
-  },
-  coverImage: {
-    type: String
+    required: [true, 'Book image is required'],
   },
   ratings: {
     average: {

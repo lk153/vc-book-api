@@ -100,7 +100,7 @@ const options = {
               type: 'string',
               example: 'English'
             },
-            coverImage: {
+            image: {
               type: 'string',
               description: 'URL to book cover image'
             },

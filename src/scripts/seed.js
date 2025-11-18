@@ -6,64 +6,57 @@ dotenv.config();
 
 const sampleBooks = [
   {
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    isbn: "0743273565",
-    description: "A classic American novel set in the Jazz Age",
-    price: 12.99,
-    stock: 50,
-    category: "Fiction",
-    publisher: "Scribner",
-    pages: 180,
-    language: "English"
-  },
-  {
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    isbn: "0061120084",
-    description: "A gripping tale of racial injustice and childhood innocence",
-    price: 14.99,
-    stock: 35,
-    category: "Fiction",
-    publisher: "Harper Perennial",
-    pages: 324,
-    language: "English"
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    isbn: "0451524935",
-    description: "A dystopian social science fiction novel",
-    price: 13.99,
-    stock: 40,
-    category: "Science Fiction",
-    publisher: "Signet Classic",
-    pages: 328,
-    language: "English"
-  },
-  {
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    isbn: "0132350884",
-    description: "A handbook of agile software craftsmanship",
-    price: 42.99,
-    stock: 25,
-    category: "Programming",
-    publisher: "Prentice Hall",
-    pages: 464,
-    language: "English"
-  },
-  {
-    title: "The Pragmatic Programmer",
-    author: "Andrew Hunt & David Thomas",
-    isbn: "0135957059",
-    description: "Your journey to mastery",
-    price: 39.99,
+    title: "The Midnight Library",
+    author: "Matt Haig",
+    price: 24.99,
     stock: 30,
-    category: "Programming",
-    publisher: "Addison-Wesley",
-    pages: 352,
-    language: "English"
+    category: "Fiction",
+    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
+    description: "A dazzling novel about all the choices that go into a life well lived."
+  },
+  {
+    title: "Atomic Habits",
+    author: "James Clear",
+    price: 27.99,
+    stock: 30,
+    category: "Self-Help",
+    image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=600&fit=crop",
+    description: "An easy and proven way to build good habits and break bad ones."
+  },
+  {
+    title: "Project Hail Mary",
+    author: "Andy Weir",
+    price: 28.99,
+    stock: 30,
+    category: "Science Fiction",
+    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
+    description: "A lone astronaut must save the earth from disaster in this incredible new science-based thriller."
+  },
+  {
+    title: "Educated",
+    author: "Tara Westover",
+    price: 26.99,
+    category: "Biography",
+    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
+    description: "A memoir about a young girl who leaves her survivalist family and goes on to earn a PhD."
+  },
+  {
+    title: "The Psychology of Money",
+    author: "Morgan Housel",
+    price: 22.99,
+    stock: 30,
+    category: "Business",
+    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&h=600&fit=crop",
+    description: "Timeless lessons on wealth, greed, and happiness."
+  },
+  {
+    title: "Where the Crawdads Sing",
+    author: "Delia Owens",
+    price: 25.99,
+    stock: 30,
+    category: "Fiction",
+    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
+    description: "A beautiful and haunting story of a girl raised in the marshes of North Carolina."
   }
 ];
 
