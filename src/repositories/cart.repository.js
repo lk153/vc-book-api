@@ -2,7 +2,7 @@ import Cart from '../models/Cart.model.js';
 
 const cartRepository = {
   async findByUserId(userId) {
-    return await findOne({ userId }).populate('items.book', 'title author price stock');
+    return await Cart.findOne({ userId }).populate('items.book', 'title author price stock');
   },
   
   async create(userId) {
@@ -11,7 +11,7 @@ const cartRepository = {
   },
   
   async addItem(userId, bookId, quantity, price) {
-    let cart = await findOne({ userId });
+    let cart = await Cart.findOne({ userId });
     
     if (!cart) {
       cart = new Cart({ userId, items: [] });
@@ -22,7 +22,7 @@ const cartRepository = {
   },
   
   async updateItemQuantity(userId, bookId, quantity) {
-    const cart = await findOne({ userId });
+    const cart = await Cart.findOne({ userId });
     if (!cart) return null;
     
     await cart.updateItemQuantity(bookId, quantity);
@@ -30,7 +30,7 @@ const cartRepository = {
   },
   
   async removeItem(userId, bookId) {
-    const cart = await findOne({ userId });
+    const cart = await Cart.findOne({ userId });
     if (!cart) return null;
     
     await cart.removeItem(bookId);
@@ -38,7 +38,7 @@ const cartRepository = {
   },
   
   async delete(userId) {
-    const cart = await findOne({ userId });
+    const cart = await Cart.findOne({ userId });
     if (cart) {
       await cart.clearCart();
     }
