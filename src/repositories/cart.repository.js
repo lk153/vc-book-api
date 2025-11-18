@@ -9,6 +9,25 @@ const cartRepository = {
     const cart = new Cart({ userId, items: [] });
     return await cart.save();
   },
+
+  async update(userId, cartData) {
+    const cart = await Cart.findOneAndUpdate(
+      { userId },
+      { 
+        $set: {
+          items: cartData.items,
+          lastModified: Date.now()
+        }
+      },
+      { 
+        new: true, 
+        upsert: true,
+        runValidators: true 
+      }
+    ).populate('items.book', 'title author price stock');
+    
+    return cart;
+  },
   
   async addItem(userId, bookId, quantity, price) {
     let cart = await Cart.findOne({ userId });
@@ -43,7 +62,17 @@ const cartRepository = {
       await cart.clearCart();
     }
     return true;
+  },
+
+  async clearCart(userId) {
+    const cart = await Cart.findOne({ userId });
+    if (cart) {
+      await cart.clearCart();
+      return cart;
+    }
+    return null;
   }
+  
 };
 
 export default cartRepository;
