@@ -9,7 +9,7 @@ const cartRepository = {
     const cart = new Cart({ userId, items: [] });
     return await cart.save();
   },
-
+  
   async update(userId, cartData) {
     const cart = await Cart.findOneAndUpdate(
       { userId },
@@ -57,13 +57,10 @@ const cartRepository = {
   },
   
   async delete(userId) {
-    const cart = await Cart.findOne({ userId });
-    if (cart) {
-      await cart.clearCart();
-    }
-    return true;
+    const result = await Cart.findOneAndDelete({ userId });
+    return !!result;
   },
-
+  
   async clearCart(userId) {
     const cart = await Cart.findOne({ userId });
     if (cart) {
@@ -72,7 +69,6 @@ const cartRepository = {
     }
     return null;
   }
-  
 };
 
 export default cartRepository;

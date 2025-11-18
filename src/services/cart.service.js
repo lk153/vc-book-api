@@ -1,5 +1,5 @@
 import cartRepository from '../repositories/cart.repository.js';
-import bookService from'./book.service.js';
+import bookService from './book.service.js';
 import ApiError from '../utils/ApiError.js';
 
 const cartService = {
@@ -23,22 +23,38 @@ const cartService = {
     }
     
     // Check if book already in cart
-    const existingItem = cart.items.find(item => item.bookId === bookId);
+    const existingItemIndex = cart.items.findIndex(item => {
+      const itemBookId = item.book._id || item.book;
+      return itemBookId.toString() === bookId.toString();
+    });
     
-    if (existingItem) {
-      existingItem.quantity += quantity;
+    if (existingItemIndex >= 0) {
+      // Update existing item quantity
+      cart.items[existingItemIndex].quantity += quantity;
     } else {
+      // Add new item
       cart.items.push({
-        bookId,
+        book: bookId,  // Store only the ObjectId
         quantity,
-        title: book.title,
-        price: book.price,
-        author: book.author
+        price: book.price
       });
     }
     
-    await cartRepository.update(userId, cart);
-    return this.calculateCartTotal(cart);
+    // Prepare data for update - extract only ObjectIds
+    const cartData = {
+      items: cart.items.map(item => ({
+        book: item.book._id || item.book,  // Extract ObjectId if populated
+        quantity: item.quantity,
+        price: item.price
+      }))
+    };
+    
+    // Update cart in database
+    await cartRepository.update(userId, cartData);
+    
+    // Fetch updated cart with populated book data
+    const updatedCart = await cartRepository.findByUserId(userId);
+    return this.calculateCartTotal(updatedCart);
   },
   
   async updateCartItem(userId, bookId, quantity) {
@@ -48,13 +64,14 @@ const cartService = {
       throw new ApiError(404, 'Cart not found');
     }
     
-    const itemIndex = cart.items.findIndex(item => item.bookId === bookId);
+    const itemIndex = cart.items.findIndex(item => item.book._id.toString() === bookId.toString());
     
     if (itemIndex === -1) {
       throw new ApiError(404, 'Item not found in cart');
     }
     
     if (quantity === 0) {
+      // Remove item
       cart.items.splice(itemIndex, 1);
     } else {
       // Validate stock
@@ -65,8 +82,12 @@ const cartService = {
       cart.items[itemIndex].quantity = quantity;
     }
     
+    // Update cart in database
     await cartRepository.update(userId, cart);
-    return this.calculateCartTotal(cart);
+    
+    // Fetch updated cart with populated book data
+    const updatedCart = await cartRepository.findByUserId(userId);
+    return this.calculateCartTotal(updatedCart);
   },
   
   async removeFromCart(userId, bookId) {
@@ -84,7 +105,8 @@ const cartService = {
     }
     
     const total = cart.items.reduce((sum, item) => {
-      return sum + (item.price * item.quantity);
+      const price = item.book?.price || item.price || 0;
+      return sum + (price * item.quantity);
     }, 0);
     
     return {

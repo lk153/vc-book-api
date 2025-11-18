@@ -35,7 +35,7 @@ const cartController = {
   
   removeFromCart: catchAsync(async (req, res) => {
     const { userId, bookId } = req.params;
-    const cart = await cartService.removeFromCart(userId, Number.parseInt(bookId));
+    const cart = await cartService.removeFromCart(userId, bookId);
     
     res.json({
       success: true,
