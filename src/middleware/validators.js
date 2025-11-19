@@ -121,9 +121,9 @@ const validators = {
   },
 
   validateChangePassword: (req, res, next) => {
-    const { oldPassword, newPassword } = req.body;
+    const { currentPassword, newPassword } = req.body;
 
-    if (!oldPassword || !newPassword) {
+    if (!currentPassword || !newPassword) {
       throw new ApiError(400, 'Old password and new password are required');
     }
 
@@ -131,7 +131,7 @@ const validators = {
       throw new ApiError(400, 'New password must be at least 6 characters');
     }
 
-    if (oldPassword === newPassword) {
+    if (currentPassword === newPassword) {
       throw new ApiError(400, 'New password must be different from old password');
     }
 

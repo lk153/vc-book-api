@@ -71,11 +71,11 @@ const authController = {
 
     // Change Password
     changePassword: catchAsync(async (req, res) => {
-        const { oldPassword, newPassword } = req.body;
+        const { currentPassword, newPassword } = req.body;
 
         await authService.changePassword(
             req.user.id,
-            oldPassword,
+            currentPassword,
             newPassword
         );
 
