@@ -28,14 +28,22 @@ const orderService = {
     const shippingFee = subtotal > config.order.freeShippingThreshold ? 0 : config.order.shippingFee;
     const tax = subtotal * config.order.taxRate;
     const total = subtotal + shippingFee + tax;
+
+    // Get books
+    let mapBooks = {};
+    for (const item of cart.items) {
+      const book = await bookService.getBookById(item.bookId);
+      mapBooks[item.bookId] = book;
+    }
     
     // Create order
     const order = await orderRepository.create({
       userId,
       items: cart.items.map(item => ({
         bookId: item.bookId,
-        title: item.title,
-        author: item.author,
+        book: mapBooks[item.bookId],
+        title: mapBooks[item.bookId].title,
+        author: mapBooks[item.bookId].author,
         price: item.price,
         quantity: item.quantity,
         subtotal: (item.price * item.quantity).toFixed(2)
@@ -48,7 +56,8 @@ const orderService = {
         tax: tax.toFixed(2),
         total: total.toFixed(2)
       },
-      status: 'Pending'
+      status: 'Pending',
+      orderNumber: `ORD-${Date.now()}`
     });
     
     // Reduce stock for all items

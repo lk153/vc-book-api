@@ -24,8 +24,8 @@ const cartService = {
     
     // Check if book already in cart
     const existingItemIndex = cart.items.findIndex(item => {
-      const itemBookId = item.book._id || item.book;
-      return itemBookId.toString() === bookId.toString();
+      const itemBookId = item.bookId;
+      return itemBookId == bookId;
     });
     
     if (existingItemIndex >= 0) {
@@ -33,8 +33,10 @@ const cartService = {
       cart.items[existingItemIndex].quantity += quantity;
     } else {
       // Add new item
+      let book = await bookService.getBookById(bookId);
       cart.items.push({
-        book: bookId,  // Store only the ObjectId
+        bookId: bookId,  // Store only the ObjectId
+        book: book,
         quantity,
         price: book.price
       });
@@ -43,7 +45,8 @@ const cartService = {
     // Prepare data for update - extract only ObjectIds
     const cartData = {
       items: cart.items.map(item => ({
-        book: item.book._id || item.book,  // Extract ObjectId if populated
+        bookId: item.bookId,  // Extract ObjectId if populated
+        book: item.book,
         quantity: item.quantity,
         price: item.price
       }))
@@ -64,7 +67,7 @@ const cartService = {
       throw new ApiError(404, 'Cart not found');
     }
     
-    const itemIndex = cart.items.findIndex(item => item.book._id.toString() === bookId.toString());
+    const itemIndex = cart.items.findIndex(item => item.bookId === bookId);
     
     if (itemIndex === -1) {
       throw new ApiError(404, 'Item not found in cart');

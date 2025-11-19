@@ -28,6 +28,10 @@ const options = {
     ],
     tags: [
       {
+        name: 'Authentication',
+        description: 'User authentication and authorization'
+      },
+      {
         name: 'Books',
         description: 'Book management endpoints'
       },
@@ -41,6 +45,13 @@ const options = {
       }
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      },
       schemas: {
         Book: {
           type: 'object',
@@ -335,6 +346,36 @@ const options = {
             }
           }
         },
+        User: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              example: '507f1f77bcf86cd799439011'
+            },
+            name: {
+              type: 'string',
+              example: 'John Doe'
+            },
+            email: {
+              type: 'string',
+              example: 'john@example.com'
+            },
+            phone: {
+              type: 'string',
+              example: '+1234567890'
+            },
+            role: {
+              type: 'string',
+              enum: ['customer', 'admin'],
+              example: 'customer'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time'
+            }
+          }
+        },
         Error: {
           type: 'object',
           properties: {
@@ -409,7 +450,12 @@ const options = {
           }
         }
       }
-    }
+    },
+    security: [
+      {
+        bearerAuth: []
+      }
+    ]
   },
   apis: ['./src/routes/*.js']
 };

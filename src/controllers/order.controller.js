@@ -6,7 +6,9 @@ const orderController = {
     const orderData = {
       userId: req.body.userId,
       shippingAddress: req.body.shippingAddress,
-      paymentMethod: req.body.paymentMethod
+      paymentMethod: req.body.paymentMethod,
+      items: req.body.items,
+      totalAmount: req.body.totalAmount
     };
     
     const order = await orderService.placeOrder(orderData);
