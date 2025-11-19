@@ -86,10 +86,16 @@ const authService = {
 
     // Update user profile
     async updateProfile(userId, updateData) {
-        const { name, phone } = updateData;
+        const { name, phone, email } = updateData;
+
+        // Check if user exists
+        const existingUser = await userRepository.findByEmail(email);
+        if (existingUser) {
+            throw new ApiError(400, 'Email ' + email + ' already existed');
+        }
 
         // Don't allow email or password update through this method
-        const allowedUpdates = { name, phone };
+        const allowedUpdates = { name, phone, email };
 
         const user = await userRepository.update(userId, allowedUpdates);
 

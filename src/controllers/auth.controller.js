@@ -55,11 +55,12 @@ const authController = {
 
     // Update Profile
     updateProfile: catchAsync(async (req, res) => {
-        const { name, phone } = req.body;
-
+        const { name, phone, email } = req.body;
+        
         const user = await authService.updateProfile(req.user.id, {
             name,
-            phone
+            phone,
+            email
         });
 
         res.json({
