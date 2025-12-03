@@ -17,7 +17,7 @@ const cartController = {
     
     res.json({
       success: true,
-      message: 'Book added to cart',
+      message: 'Sách đã được thêm vào giỏ hàng',
       data: cart
     });
   }),
@@ -28,7 +28,7 @@ const cartController = {
     
     res.json({
       success: true,
-      message: 'Cart updated successfully',
+      message: 'Giỏ hàng đã được cập nhật thành công',
       data: cart
     });
   }),
@@ -39,7 +39,7 @@ const cartController = {
     
     res.json({
       success: true,
-      message: 'Item removed from cart',
+      message: 'Sách đã được xóa khỏi giỏ hàng',
       data: cart
     });
   }),
@@ -49,7 +49,7 @@ const cartController = {
     
     res.json({
       success: true,
-      message: 'Cart cleared successfully'
+      message: 'Giỏ hàng đã được xóa thành công'
     });
   })
 };

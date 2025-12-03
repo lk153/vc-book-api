@@ -1,11 +1,14 @@
 import express from 'express';
 import authController from '../controllers/auth.controller.js';
 import { authenticate } from '../middleware/auth.js';
-import { 
-  validateRegister, 
+import {
+  validateRegister,
   validateLogin,
   validateUpdateProfile,
-  validateChangePassword
+  validateChangePassword,
+  validateForgotPassword,
+  validateVerifyResetToken,
+  validateResetPassword,
 } from '../middleware/validators.js';
 
 const router = express.Router();
@@ -206,5 +209,78 @@ router.put('/profile', authenticate, validateUpdateProfile, authController.updat
  *         description: Invalid old password
  */
 router.post('/change-password', authenticate, validateChangePassword, authController.changePassword);
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Send password reset email
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Reset email sent (or success response for security)
+ */
+router.post('/forgot-password', validateForgotPassword, authController.forgotPassword);
+
+/**
+ * @swagger
+ * /auth/verify-reset-token:
+ *   post:
+ *     summary: Verify password reset token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token is valid
+ */
+router.post('/verify-reset-token', validateVerifyResetToken, authController.verifyResetToken);
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset user password using token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - password
+ *             properties:
+ *               token:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ */
+router.post('/reset-password', validateResetPassword, authController.resetPassword);
 
 export default router;

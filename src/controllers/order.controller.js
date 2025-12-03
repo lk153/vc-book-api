@@ -15,7 +15,7 @@ const orderController = {
     
     res.status(201).json({
       success: true,
-      message: 'Order placed successfully',
+      message: 'Đơn hàng đã đặt thành công',
       data: order
     });
   }),
@@ -45,7 +45,7 @@ const orderController = {
     
     res.json({
       success: true,
-      message: 'Order status updated',
+      message: 'Trạng thái đơn hàng đã được cập nhật',
       data: order
     });
   }),
@@ -55,7 +55,7 @@ const orderController = {
     
     res.json({
       success: true,
-      message: 'Order cancelled successfully'
+      message: 'Đơn hàng đã được hủy thành công'
     });
   })
 };

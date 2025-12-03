@@ -46,7 +46,7 @@ export const authenticate = async (req, res, next) => {
 // Middleware to check if user is admin
 export const isAdmin = (req, res, next) => {
     if (req.user.role !== 'admin') {
-        throw new ApiError(403, 'Access denied. Admin only.');
+        throw new ApiError(403, 'Từ chối truy cập. Chỉ dành cho quản trị viên.');
     }
     next();
 };

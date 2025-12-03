@@ -26,7 +26,7 @@ const bookService = {
   async getBookById(id) {
     const book = await bookRepository.findById(id);
     if (!book) {
-      throw new ApiError(404, 'Book not found');
+      throw new ApiError(404, 'Sách không được tìm thấy');
     }
     return book;
   },
@@ -38,7 +38,7 @@ const bookService = {
   async updateBook(id, bookData) {
     const book = await bookRepository.update(id, bookData);
     if (!book) {
-      throw new ApiError(404, 'Book not found');
+      throw new ApiError(404, 'Sách không được tìm thấy');
     }
     return book;
   },
@@ -46,7 +46,7 @@ const bookService = {
   async deleteBook(id) {
     const deleted = await bookRepository.delete(id);
     if (!deleted) {
-      throw new ApiError(404, 'Book not found');
+      throw new ApiError(404, 'Sách không được tìm thấy');
     }
     return true;
   },
@@ -59,7 +59,7 @@ const bookService = {
   async reduceStock(bookId, quantity) {
     const book = await this.getBookById(bookId);
     if (book.stock < quantity) {
-      throw new ApiError(400, `Insufficient stock for ${book.title}`);
+      throw new ApiError(400, `Số lượng trong kho không đủ cho ${book.title}`);
     }
     book.stock -= quantity;
     await bookRepository.update(bookId, book);

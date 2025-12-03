@@ -13,7 +13,7 @@ const cartService = {
     const book = await bookService.getBookById(bookId);
     
     if (quantity > book.stock) {
-      throw new ApiError(400, `Only ${book.stock} items available in stock`);
+      throw new ApiError(400, `Chỉ ${book.stock} sản phẩm có sẵn trong kho`);
     }
     
     let cart = await cartRepository.findByUserId(userId);
@@ -64,13 +64,13 @@ const cartService = {
     const cart = await cartRepository.findByUserId(userId);
     
     if (!cart) {
-      throw new ApiError(404, 'Cart not found');
+      throw new ApiError(404, 'Giỏ hàng không được tìm thấy');
     }
     
     const itemIndex = cart.items.findIndex(item => item.bookId === bookId);
     
     if (itemIndex === -1) {
-      throw new ApiError(404, 'Item not found in cart');
+      throw new ApiError(404, 'Sản phẩm không có trong giỏ hàng');
     }
     
     if (quantity === 0) {
@@ -80,7 +80,7 @@ const cartService = {
       // Validate stock
       const book = await bookService.getBookById(bookId);
       if (quantity > book.stock) {
-        throw new ApiError(400, `Only ${book.stock} items available`);
+        throw new ApiError(400, `Chỉ ${book.stock} sản phẩm có sẵn trong kho`);
       }
       cart.items[itemIndex].quantity = quantity;
     }

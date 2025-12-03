@@ -15,7 +15,7 @@ const authController = {
 
         res.status(201).json({
             success: true,
-            message: 'User registered successfully',
+            message: 'Đăng ký thành công',
             token: result.token,
             user: result.user
         });
@@ -29,7 +29,7 @@ const authController = {
 
         res.json({
             success: true,
-            message: 'Login successful',
+            message: 'Đăng nhập thành công',
             token: result.token,
             user: result.user
         });
@@ -39,7 +39,7 @@ const authController = {
     logout: catchAsync(async (req, res) => {
         res.json({
             success: true,
-            message: 'Logout successful'
+            message: 'Đăng xuất thành công'
         });
     }),
 
@@ -56,16 +56,10 @@ const authController = {
     // Update Profile
     updateProfile: catchAsync(async (req, res) => {
         const { name, phone, email } = req.body;
-        
-        const user = await authService.updateProfile(req.user.id, {
-            name,
-            phone,
-            email
-        });
-
+        const user = await authService.updateProfile(req.user.id, { name, phone, email });
         res.json({
             success: true,
-            message: 'Profile updated successfully',
+            message: 'Hồ sơ cập nhật thành công',
             data: user
         });
     }),
@@ -82,7 +76,48 @@ const authController = {
 
         res.json({
             success: true,
-            message: 'Password changed successfully'
+            message: 'Mật khẩu đã được thay đổi thành công'
+        });
+    })
+
+    ,
+
+    // Forgot Password - send reset email
+    forgotPassword: catchAsync(async (req, res) => {
+        const { email } = req.body;
+
+        const result = await authService.sendResetPasswordEmail(email);
+
+        res.json({
+            success: true,
+            message: 'If the email exists, a reset link has been sent',
+            // returning token/resetUrl for development and testing
+            resetUrl: result.resetUrl,
+            token: result.token
+        });
+    }),
+
+    // Verify reset token
+    verifyResetToken: catchAsync(async (req, res) => {
+        const { token } = req.body;
+
+        await authService.verifyResetToken(token);
+
+        res.json({
+            success: true,
+            message: 'Reset token is valid'
+        });
+    }),
+
+    // Reset password
+    resetPassword: catchAsync(async (req, res) => {
+        const { token, password } = req.body;
+
+        await authService.resetPassword(token, password);
+
+        res.json({
+            success: true,
+            message: 'Đã đặt lại mật khẩu thành công'
         });
     })
 };

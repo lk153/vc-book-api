@@ -12,14 +12,14 @@ const orderService = {
     const cart = await cartService.getCart(userId);
     
     if (!cart.items || cart.items.length === 0) {
-      throw new ApiError(400, 'Cart is empty');
+      throw new ApiError(400, 'Giỏ hàng trống');
     }
     
     // Validate stock for all items
     for (const item of cart.items) {
       const hasStock = await bookService.checkStock(item.bookId, item.quantity);
       if (!hasStock) {
-        throw new ApiError(400, `Insufficient stock for ${item.title}`);
+        throw new ApiError(400, `Không đủ số lượng trong kho: ${item.title}`);
       }
     }
     
@@ -74,7 +74,7 @@ const orderService = {
   async getOrderById(orderId) {
     const order = await orderRepository.findById(orderId);
     if (!order) {
-      throw new ApiError(404, 'Order not found');
+      throw new ApiError(404, 'Đơn hàng không tìm thấy');
     }
     return order;
   },

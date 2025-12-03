@@ -35,7 +35,7 @@ const bookController = {
     
     res.status(201).json({
       success: true,
-      message: 'Book created successfully',
+      message: 'Sách được tạo thành công',
       data: book
     });
   }),
@@ -45,7 +45,7 @@ const bookController = {
     
     res.json({
       success: true,
-      message: 'Book updated successfully',
+      message: 'Sách đã cập nhật thành công',
       data: book
     });
   }),
@@ -55,7 +55,7 @@ const bookController = {
     
     res.json({
       success: true,
-      message: 'Book deleted successfully'
+      message: 'Sách đã xóa thành công'
     });
   })
 };

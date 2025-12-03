@@ -16,5 +16,7 @@ export default {
   jwt: {
     secret: process.env.JWT_SECRET ?? 'your-secret-key',
     expiresIn: '24h'
-  }
+  },
+
+  web_path: process.env.WEB_PATH ?? 'http://localhost:8000'
 };
