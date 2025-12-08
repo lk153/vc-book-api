@@ -6,57 +6,40 @@ dotenv.config();
 
 const sampleBooks = [
   {
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 24.99,
+    title: "Tam Tự Kinh",
+    author: "Chánh Kiến Việt Ngữ",
+    price: 55000,
     stock: 30,
-    category: "Fiction",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-    description: "A dazzling novel about all the choices that go into a life well lived."
+    category: "Tiểu đệ tử",
+    image: "https://chanhkien.org/wp-content/uploads/2025/06/tam-tu-kinh.png",
+    description: "Bản dịch Tam Tự Kinh chuẩn xác và dễ hiểu dành cho trẻ em Việt Nam."
   },
   {
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 27.99,
+    title: "Ấu học Quỳnh Lâm",
+    author: "Chánh Kiến Việt Ngữ",
+    price: 35000,
     stock: 30,
-    category: "Self-Help",
-    image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=600&fit=crop",
-    description: "An easy and proven way to build good habits and break bad ones."
+    category: "Tiểu đệ tử",
+    image: "https://chanhkien.org/wp-content/uploads/2025/06/2008_9_18_yxql.jpg",
+    description: "Bản dịch Ấu học Quỳnh Lâm giúp trẻ em học tập và rèn luyện đạo đức."
   },
   {
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    price: 28.99,
+    title: "Đệ tử Quy",
+    author: "Chánh Kiến Việt Ngữ",
+    price: 45000,
     stock: 30,
-    category: "Science Fiction",
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-    description: "A lone astronaut must save the earth from disaster in this incredible new science-based thriller."
+    category: "Tiểu đệ tử",
+    image: "https://chanhkien.org/wp-content/uploads/2025/06/dizigui.jpg",
+    description: "Bản dịch Đệ tử Quy giúp trẻ em hiểu rõ về quy tắc ứng xử và lễ nghi."
   },
   {
-    title: "Educated",
-    author: "Tara Westover",
-    price: 26.99,
-    category: "Biography",
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-    description: "A memoir about a young girl who leaves her survivalist family and goes on to earn a PhD."
-  },
-  {
-    title: "The Psychology of Money",
-    author: "Morgan Housel",
-    price: 22.99,
+    title: "Huyền Mộc Ký",
+    author: "Chánh Kiến Việt Ngữ",
+    price: 40000,
     stock: 30,
-    category: "Business",
-    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&h=600&fit=crop",
-    description: "Timeless lessons on wealth, greed, and happiness."
-  },
-  {
-    title: "Where the Crawdads Sing",
-    author: "Delia Owens",
-    price: 25.99,
-    stock: 30,
-    category: "Fiction",
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-    description: "A beautiful and haunting story of a girl raised in the marshes of North Carolina."
+    category: "Tiểu đệ tử",
+    image: "https://chanhkien.org/wp-content/uploads/2025/06/huyen-moc-ky.png",
+    description: "Bản dịch Huyền Mộc Ký giúp trẻ em phát triển tư duy và trí tuệ."
   }
 ];
 

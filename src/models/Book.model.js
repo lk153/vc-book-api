@@ -32,7 +32,7 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     enum: {
-      values: ['Self-Help', 'Fiction', 'Non-Fiction', 'Science Fiction', 'Mystery', 'Romance', 'Programming', 'Business', 'History', 'Biography', 'Other'],
+      values: ['Tiểu đệ tử'],
       message: '{VALUE} is not a valid category'
     }
   },
