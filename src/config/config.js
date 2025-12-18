@@ -18,5 +18,11 @@ export default {
     expiresIn: '24h'
   },
 
-  web_path: process.env.WEB_PATH ?? 'http://localhost:8000'
+  web_path: process.env.WEB_PATH ?? 'http://localhost:8000',
+  email: {
+    smtpHost: process.env.SMTP_HOST ?? 'smtp-relay.brevo.com',
+    smtpPort: process.env.SMTP_PORT ?? 587,
+    smtpUser: process.env.SMTP_USER ?? '',
+    smtpPass: process.env.SMTP_PASS ?? ''
+  }
 };

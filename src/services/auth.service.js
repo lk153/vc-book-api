@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import userRepository from '../repositories/user.repository.js';
 import ApiError from '../utils/ApiError.js';
 import config from '../config/config.js';
+import sendEmail from '../utils/email.js';
 
 const authService = {
     // Generate JWT token
@@ -166,6 +167,7 @@ const authService = {
 
         // Construct a reset URL (for dev/demo purposes)
         const resetUrl = `${config.web_path}/reset-password?token=${token}`;
+        sendEmail(email, "Yêu cầu đặt lại mật khẩu", `Nhấp vào liên kết để đặt lại mật khẩu của bạn: ${resetUrl}`);
 
         // TODO: Integrate real email service. For now, log the URL.
         // In production, send `resetUrl` to user's email address.
