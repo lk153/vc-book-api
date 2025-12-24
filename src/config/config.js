@@ -23,6 +23,7 @@ export default {
     smtpHost: process.env.SMTP_HOST ?? 'smtp-relay.brevo.com',
     smtpPort: process.env.SMTP_PORT ?? 587,
     smtpUser: process.env.SMTP_USER ?? '',
-    smtpPass: process.env.SMTP_PASS ?? ''
+    smtpPass: process.env.SMTP_PASS ?? '',
+    apiKey: process.env.BREVO_API_KEY ?? ''
   }
 };
