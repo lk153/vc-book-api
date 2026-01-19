@@ -57,6 +57,11 @@ const authService = {
             throw new ApiError(401, 'Tài khoản đã bị vô hiệu hóa');
         }
 
+        // Check if user is banned
+        if (user.banned) {
+            throw new ApiError(403, 'Tài khoản của bạn đã bị cấm');
+        }
+
         // Verify password
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
