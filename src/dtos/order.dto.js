@@ -9,6 +9,7 @@ export const toOrderItemDTO = (item) => {
     bookId: item.book?._id || item.book,
     title: item.title,
     author: item.author,
+    image: item.book?.image || item.image || null,
     price: item.price,
     quantity: item.quantity,
     subtotal: item.subtotal

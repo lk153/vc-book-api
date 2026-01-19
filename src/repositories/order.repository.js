@@ -4,21 +4,21 @@ const orderRepository = {
   async create(orderData) {
     const order = new Order(orderData);
     await order.save();
-    return await order.populate('items.book', 'title author');
+    return await order.populate('items.book', 'title author image');
   },
 
   async findById(orderId) {
-    return await Order.findById(orderId).populate('items.book', 'title author isbn');
+    return await Order.findById(orderId).populate('items.book', 'title author isbn image');
   },
 
   async findByOrderNumber(orderNumber) {
-    return await Order.findOne({ orderNumber }).populate('items.book', 'title author isbn');
+    return await Order.findOne({ orderNumber }).populate('items.book', 'title author isbn image');
   },
 
   async findByUserId(userId, options = {}) {
     const query = Order.find({ userId })
       .sort({ createdAt: -1 })
-      .populate('items.book', 'title author');
+      .populate('items.book', 'title author image');
 
     if (options.status) {
       query.where('status').equals(options.status);

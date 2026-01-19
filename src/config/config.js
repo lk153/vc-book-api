@@ -8,9 +8,9 @@ export default {
   },
   
   order: {
-    freeShippingThreshold: 50,
-    shippingFee: 5.99,
-    taxRate: 0.08
+    freeShippingThreshold: Number(process.env.FREE_SHIPPING_THRESHOLD) || 1000000,
+    shippingFee: Number(process.env.SHIPPING_FEE) || 0,
+    taxRate: Number(process.env.TAX_RATE) || 0
   },
   
   jwt: {
