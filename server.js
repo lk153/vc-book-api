@@ -1,11 +1,15 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import crypto from 'crypto';
 import config from './src/config/config.js';
 import connectDB from './src/config/database.js';
 import swaggerSpec from './src/config/swagger.js';
 import routes from './src/routes/index.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
+import requestLogger from './src/middleware/requestLogger.js';
 import logger from './src/utils/logger.js';
 
 dotenv.config();
@@ -14,26 +18,59 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Security middleware - Helmet for security headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: config.env === 'production' ? undefined : false
+}));
 
-// CORS (if needed)
+// Rate limiting - 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    success: false,
+    message: 'Too many requests, please try again later'
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use('/api/', limiter);
+
+// Request ID middleware for correlation
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  req.id = crypto.randomUUID();
+  res.setHeader('X-Request-ID', req.id);
+  next();
+});
+
+// Body parsers
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// CORS configuration - explicit origins
+const allowedOrigins = [
+  config.web_path,
+  'http://localhost:3000',
+  'http://localhost:8000'
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin) || config.env === 'development') {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+  res.header('Access-Control-Expose-Headers', 'X-Request-ID');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
   next();
 });
 
-// Request logging
-app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.path}`);
-  next();
-});
+// Request logging with correlation ID and response timing
+app.use(requestLogger);
 
 // Swagger Documentation UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {

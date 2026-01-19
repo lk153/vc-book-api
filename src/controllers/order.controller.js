@@ -1,5 +1,6 @@
 import orderService from '../services/order.service.js';
 import catchAsync from '../utils/catchAsync.js';
+import { toOrderDTO, toOrderListDTO } from '../dtos/index.js';
 
 const orderController = {
   placeOrder: catchAsync(async (req, res) => {
@@ -10,49 +11,50 @@ const orderController = {
       items: req.body.items,
       totalAmount: req.body.totalAmount
     };
-    
+
     const order = await orderService.placeOrder(orderData);
-    
+
     res.status(201).json({
       success: true,
       message: 'Đơn hàng đã đặt thành công',
-      data: order
+      data: toOrderDTO(order)
     });
   }),
-  
+
   getOrderById: catchAsync(async (req, res) => {
     const order = await orderService.getOrderById(req.params.orderId);
-    
+
     res.json({
       success: true,
-      data: order
+      data: toOrderDTO(order)
     });
   }),
-  
+
   getUserOrders: catchAsync(async (req, res) => {
     const orders = await orderService.getUserOrders(req.params.userId);
-    
+    const orderDTOs = toOrderListDTO(orders);
+
     res.json({
       success: true,
-      count: orders.length,
-      data: orders
+      count: orderDTOs.length,
+      data: orderDTOs
     });
   }),
-  
+
   updateOrderStatus: catchAsync(async (req, res) => {
     const { status } = req.body;
     const order = await orderService.updateOrderStatus(req.params.orderId, status);
-    
+
     res.json({
       success: true,
       message: 'Trạng thái đơn hàng đã được cập nhật',
-      data: order
+      data: toOrderDTO(order)
     });
   }),
-  
+
   cancelOrder: catchAsync(async (req, res) => {
     await orderService.cancelOrder(req.params.orderId);
-    
+
     res.json({
       success: true,
       message: 'Đơn hàng đã được hủy thành công'

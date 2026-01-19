@@ -1,5 +1,6 @@
 import authService from '../services/auth.service.js';
 import catchAsync from '../utils/catchAsync.js';
+import { toUserDTO, toAuthResponseDTO } from '../dtos/index.js';
 
 const authController = {
     // Register
@@ -13,11 +14,12 @@ const authController = {
             password
         });
 
+        const authResponse = toAuthResponseDTO(result.user, result.token);
+
         res.status(201).json({
             success: true,
             message: 'Đăng ký thành công',
-            token: result.token,
-            user: result.user
+            ...authResponse
         });
     }),
 
@@ -27,11 +29,12 @@ const authController = {
 
         const result = await authService.login(email, password);
 
+        const authResponse = toAuthResponseDTO(result.user, result.token);
+
         res.json({
             success: true,
             message: 'Đăng nhập thành công',
-            token: result.token,
-            user: result.user
+            ...authResponse
         });
     }),
 
@@ -49,7 +52,7 @@ const authController = {
 
         res.json({
             success: true,
-            data: user
+            data: toUserDTO(user)
         });
     }),
 
@@ -60,7 +63,7 @@ const authController = {
         res.json({
             success: true,
             message: 'Hồ sơ cập nhật thành công',
-            data: user
+            data: toUserDTO(user)
         });
     }),
 

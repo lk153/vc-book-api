@@ -1,4 +1,4 @@
-import Book from '../models/Book.model.js';
+import Book from '../models/book.model.js';
 
 const bookRepository = {
   async findAll(filters = {}) {
