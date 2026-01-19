@@ -6,10 +6,12 @@ import bookRoutes from './book.routes.js';
 import cartRoutes from './cart.routes.js';
 import orderRoutes from './order.routes.js';
 import authRoutes from './auth.routes.js';
+import adminRoutes from './admin.routes.js';
 
 router.use('/books', bookRoutes);
 router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
 router.use('/auth', authRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;

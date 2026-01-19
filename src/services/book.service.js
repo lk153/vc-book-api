@@ -32,15 +32,29 @@ const bookService = {
   },
   
   async createBook(bookData) {
-    return await bookRepository.create(bookData);
+    // Normalize coverImage to image
+    const normalizedData = this._normalizeBookData(bookData);
+    return await bookRepository.create(normalizedData);
   },
-  
+
   async updateBook(id, bookData) {
-    const book = await bookRepository.update(id, bookData);
+    // Normalize coverImage to image
+    const normalizedData = this._normalizeBookData(bookData);
+    const book = await bookRepository.update(id, normalizedData);
     if (!book) {
       throw new ApiError(404, 'Sách không được tìm thấy');
     }
     return book;
+  },
+
+  _normalizeBookData(data) {
+    const normalized = { ...data };
+    // Map coverImage to image (admin API compatibility)
+    if (normalized.coverImage && !normalized.image) {
+      normalized.image = normalized.coverImage;
+    }
+    delete normalized.coverImage;
+    return normalized;
   },
   
   async deleteBook(id) {

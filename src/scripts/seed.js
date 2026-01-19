@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Book from '../models/Book.model.js';
+import Book from '../models/book.model.js';
 import logger from '../utils/logger.js';
 import dotenv from 'dotenv';
 dotenv.config();

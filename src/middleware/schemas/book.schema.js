@@ -41,14 +41,22 @@ export const createBookSchema = Joi.object({
       'any.required': 'Danh mục là bắt buộc'
     }),
   image: Joi.string()
-    .required()
     .messages({
       'any.required': 'Hình ảnh là bắt buộc'
     }),
+  coverImage: Joi.string()
+    .messages({
+      'any.required': 'Hình ảnh là bắt buộc'
+    }),
+  isbn: Joi.string().allow(''),
+  publisher: Joi.string().allow(''),
+  pages: Joi.number().integer().min(0),
   ratings: Joi.object({
     average: Joi.number().min(0).max(5),
     count: Joi.number().integer().min(0)
   })
+}).or('image', 'coverImage').messages({
+  'object.missing': 'Hình ảnh là bắt buộc'
 });
 
 export const updateBookSchema = Joi.object({
@@ -81,6 +89,10 @@ export const updateBookSchema = Joi.object({
     }),
   category: Joi.string(),
   image: Joi.string(),
+  coverImage: Joi.string(),
+  isbn: Joi.string().allow(''),
+  publisher: Joi.string().allow(''),
+  pages: Joi.number().integer().min(0),
   ratings: Joi.object({
     average: Joi.number().min(0).max(5),
     count: Joi.number().integer().min(0)
