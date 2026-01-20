@@ -75,19 +75,50 @@ export const toAdminOrderListDTO = (orders) => {
 export const toAdminOrderDetailDTO = (order) => {
   if (!order) return null;
 
-  const dto = toAdminOrderDTO(order);
-  if (dto && dto.items) {
-    dto.items = order.items?.map(item => ({
+  const orderId = order._id || order.id;
+
+  return {
+    id: orderId,
+    _id: orderId,
+    orderNumber: order.orderNumber,
+    user: order.userId ? {
+      id: order.userId._id || order.userId,
+      name: order.userId.name || null,
+      email: order.userId.email || null
+    } : null,
+    items: order.items?.map(item => ({
       book: {
         id: item.book?._id || item.book,
         title: item.title || item.book?.title,
+        author: item.author || item.book?.author,
         coverImage: item.book?.image || null
       },
       quantity: item.quantity,
       price: item.price
-    })) || [];
-  }
-  return dto;
+    })) || [],
+    summary: {
+      subtotal: order.summary?.subtotal || 0,
+      tax: order.summary?.tax || 0,
+      shipping: order.summary?.shippingFee || 0,
+      total: order.summary?.total || 0
+    },
+    totalAmount: order.summary?.total || 0,
+    status: order.status?.toLowerCase(),
+    paymentMethod: order.paymentMethod,
+    shippingAddress: order.shippingAddress ? {
+      fullName: order.shippingAddress.fullName,
+      phone: order.shippingAddress.phone,
+      address: order.shippingAddress.address,
+      city: order.shippingAddress.city,
+      state: order.shippingAddress.state,
+      district: order.shippingAddress.state,
+      ward: order.shippingAddress.postalCode,
+      postalCode: order.shippingAddress.postalCode,
+      country: order.shippingAddress.country
+    } : null,
+    createdAt: order.createdAt,
+    updatedAt: order.updatedAt
+  };
 };
 
 // Admin user list item DTO
