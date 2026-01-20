@@ -100,8 +100,8 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'],
-    default: 'Pending',
+    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
+    default: 'pending',
     index: true
   },
   statusHistory: [{
@@ -157,11 +157,11 @@ orderSchema.pre('save', function(next) {
 
 // Method to cancel order
 orderSchema.methods.cancel = async function(reason) {
-  if (this.status !== 'Pending' && this.status !== 'Processing') {
+  if (this.status !== 'pending' && this.status !== 'processing') {
     throw new Error('Only pending or processing orders can be cancelled');
   }
-  
-  this.status = 'Cancelled';
+
+  this.status = 'cancelled';
   this.cancelReason = reason;
   await this.save();
 };

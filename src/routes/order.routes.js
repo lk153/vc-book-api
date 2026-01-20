@@ -131,7 +131,7 @@ router.get('/user/:userId', orderController.getUserOrders);
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [Pending, Processing, Shipped, Delivered, Cancelled]
+ *                 enum: [pending, processing, shipped, delivered, cancelled, refunded]
  *     responses:
  *       200:
  *         description: Order status updated

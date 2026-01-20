@@ -311,8 +311,8 @@ const options = {
             },
             status: {
               type: 'string',
-              enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'],
-              example: 'Pending'
+              enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
+              example: 'pending'
             },
             statusHistory: {
               type: 'array',

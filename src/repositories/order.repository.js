@@ -60,7 +60,7 @@ const orderRepository = {
     return await Order.aggregate([
       {
         $match: {
-          status: { $in: ['Delivered', 'Shipped'] },
+          status: 'delivered',
           createdAt: { $gte: startDate, $lte: endDate }
         }
       },

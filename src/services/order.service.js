@@ -56,7 +56,7 @@ const orderService = {
         tax: tax.toFixed(2),
         total: total.toFixed(2)
       },
-      status: 'Pending',
+      status: 'pending',
       orderNumber: `ORD-${Date.now()}`
     });
     
@@ -84,7 +84,7 @@ const orderService = {
   },
   
   async updateOrderStatus(orderId, status) {
-    const validStatuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
     
     if (!validStatuses.includes(status)) {
       throw new ApiError(400, 'Invalid order status');
@@ -100,7 +100,7 @@ const orderService = {
   async cancelOrder(orderId) {
     const order = await this.getOrderById(orderId);
     
-    if (order.status !== 'Pending') {
+    if (order.status !== 'pending') {
       throw new ApiError(400, 'Only pending orders can be cancelled');
     }
     
@@ -111,7 +111,7 @@ const orderService = {
       await bookService.updateBook(item.bookId, book);
     }
     
-    await orderRepository.updateStatus(orderId, 'Cancelled');
+    await orderRepository.updateStatus(orderId, 'cancelled');
     return true;
   }
 };

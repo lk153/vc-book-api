@@ -119,7 +119,7 @@ src/
 
 ### Order
 - Fields: orderNumber (auto-generated), userId, items, shippingAddress, paymentMethod, summary (subtotal, shippingFee, tax, total), status, statusHistory
-- Status enum: Pending, Processing, Shipped, Delivered, Cancelled, Refunded
+- Status enum: pending, processing, shipped, delivered, cancelled, refunded
 - Methods: `cancel()`
 
 ## Configuration
@@ -280,3 +280,13 @@ const controller = {
 - Soft deletes via `isActive: false` flag
 - Order numbers auto-generated: ORD-YYYYMMDD-XXXX
 - Email service uses Brevo API
+
+### Order Statuses
+| Status | Meaning |
+|--------|---------|
+| `pending` | Order placed, awaiting confirmation or payment verification |
+| `processing` | Order confirmed, being prepared for shipment |
+| `shipped` | Order dispatched, in transit to customer |
+| `delivered` | Order received by customer (completed) |
+| `cancelled` | Order cancelled before shipment (stock restored) |
+| `refunded` | Payment returned to customer after delivery/return |

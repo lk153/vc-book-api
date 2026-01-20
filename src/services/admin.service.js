@@ -65,7 +65,7 @@ const adminService = {
     const revenueResult = await Order.aggregate([
       {
         $match: {
-          status: { $in: ['Delivered', 'Shipped'] }
+          status: 'delivered'
         }
       },
       {
@@ -94,15 +94,7 @@ const adminService = {
 
     const query = {};
     if (status) {
-      // Map lowercase status to model's status format
-      const statusMap = {
-        'pending': 'Pending',
-        'processing': 'Processing',
-        'shipped': 'Shipped',
-        'delivered': 'Delivered',
-        'cancelled': 'Cancelled'
-      };
-      query.status = statusMap[status.toLowerCase()] || status;
+      query.status = status.toLowerCase();
     }
 
     const total = await Order.countDocuments(query);
@@ -141,15 +133,7 @@ const adminService = {
   async updateOrderStatus(orderId, status) {
     const Order = (await import('../models/order.model.js')).default;
 
-    // Map lowercase to model format
-    const statusMap = {
-      'pending': 'Pending',
-      'processing': 'Processing',
-      'shipped': 'Shipped',
-      'delivered': 'Delivered',
-      'cancelled': 'Cancelled'
-    };
-    const mappedStatus = statusMap[status.toLowerCase()] || status;
+    const mappedStatus = status.toLowerCase();
 
     const order = await Order.findById(orderId);
     if (!order) {

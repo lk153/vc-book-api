@@ -68,7 +68,7 @@ export const createOrderSchema = Joi.object({
 
 export const updateOrderStatusSchema = Joi.object({
   status: Joi.string()
-    .valid('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded')
+    .valid('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')
     .required()
     .messages({
       'any.only': 'Trạng thái không hợp lệ',

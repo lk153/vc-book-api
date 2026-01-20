@@ -106,8 +106,8 @@ export const createTestOrder = (overrides = {}) => ({
     tax: 3.20,
     total: 49.17
   },
-  status: 'Pending',
-  statusHistory: [{ status: 'Pending', timestamp: new Date() }],
+  status: 'pending',
+  statusHistory: [{ status: 'pending', timestamp: new Date() }],
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides

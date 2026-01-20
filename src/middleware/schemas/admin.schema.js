@@ -23,10 +23,10 @@ export const adminLoginSchema = Joi.object({
 // Update order status schema
 export const updateOrderStatusSchema = Joi.object({
   status: Joi.string()
-    .valid('pending', 'processing', 'shipped', 'delivered', 'cancelled')
+    .valid('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')
     .required()
     .messages({
-      'any.only': 'Status must be one of: pending, processing, shipped, delivered, cancelled',
+      'any.only': 'Status must be one of: pending, processing, shipped, delivered, cancelled, refunded',
       'string.empty': 'Status is required'
     })
 });
@@ -46,7 +46,7 @@ export const adminListQuerySchema = Joi.object({
   page: Joi.number().integer().min(1).default(1),
   limit: Joi.number().integer().min(1).max(100).default(10),
   search: Joi.string().max(100).allow(''),
-  status: Joi.string().valid('pending', 'processing', 'shipped', 'delivered', 'cancelled')
+  status: Joi.string().valid('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded')
 });
 
 // MongoDB ObjectId param schema
