@@ -115,10 +115,15 @@ const authService = {
 
     // Change password
     async changePassword(userId, oldPassword, newPassword) {
-        // Get user with password
-        const user = await userRepository.findByEmail(
-            (await userRepository.findById(userId)).email
-        );
+        // Get user by ID first
+        const userById = await userRepository.findById(userId);
+
+        if (!userById) {
+            throw new ApiError(404, 'Người dùng không được tìm thấy');
+        }
+
+        // Get user with password field
+        const user = await userRepository.findByEmail(userById.email);
 
         if (!user) {
             throw new ApiError(404, 'Người dùng không được tìm thấy');
