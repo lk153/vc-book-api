@@ -1,10 +1,14 @@
 export default {
   env: process.env.NODE_ENV ?? 'development',
   port: process.env.PORT ?? 3000,
-  
+
   pagination: {
     defaultLimit: 10,
     maxLimit: 100
+  },
+
+  book: {
+    categories: (process.env.BOOK_CATEGORIES || 'Tiểu đệ tử,Văn học,Kinh tế,Khoa học,Kỹ năng sống,Thiếu nhi,Giáo dục,Tâm lý,Lịch sử,Ngoại ngữ').split(',').map(c => c.trim())
   },
   
   order: {

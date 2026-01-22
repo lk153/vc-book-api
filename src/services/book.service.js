@@ -4,20 +4,19 @@ import ApiError from '../utils/ApiError.js';
 const bookService = {
   async getAllBooks(filters) {
     const { page, limit, ...queryFilters } = filters;
-    
-    let books = await bookRepository.findAll(queryFilters);
-    
-    // Pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const paginatedBooks = books.slice(startIndex, endIndex);
-    
+
+    // Get paginated books and total count from database
+    const [books, totalItems] = await Promise.all([
+      bookRepository.findAll(queryFilters, { page, limit }),
+      bookRepository.countAll(queryFilters)
+    ]);
+
     return {
-      books: paginatedBooks,
+      books,
       pagination: {
         currentPage: page,
-        totalPages: Math.ceil(books.length / limit),
-        totalItems: books.length,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
         itemsPerPage: limit
       }
     };

@@ -5,6 +5,7 @@ import { createTestBook } from '../../utils/testHelpers.js';
 // For ES modules, we need to use unstable_mockModule before imports
 const mockBookRepository = {
   findAll: jest.fn(),
+  countAll: jest.fn(),
   findById: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
@@ -27,11 +28,11 @@ describe('BookService', () => {
     it('should return paginated books', async () => {
       const mockBooks = [
         createTestBook({ _id: '1', title: 'Book 1' }),
-        createTestBook({ _id: '2', title: 'Book 2' }),
-        createTestBook({ _id: '3', title: 'Book 3' })
+        createTestBook({ _id: '2', title: 'Book 2' })
       ];
 
       mockBookRepository.findAll.mockResolvedValue(mockBooks);
+      mockBookRepository.countAll.mockResolvedValue(3);
 
       const result = await bookService.getAllBooks({ page: 1, limit: 2 });
 
@@ -42,11 +43,13 @@ describe('BookService', () => {
         totalItems: 3,
         itemsPerPage: 2
       });
-      expect(mockBookRepository.findAll).toHaveBeenCalledWith({});
+      expect(mockBookRepository.findAll).toHaveBeenCalledWith({}, { page: 1, limit: 2 });
+      expect(mockBookRepository.countAll).toHaveBeenCalledWith({});
     });
 
     it('should pass filters to repository', async () => {
       mockBookRepository.findAll.mockResolvedValue([]);
+      mockBookRepository.countAll.mockResolvedValue(0);
 
       await bookService.getAllBooks({
         page: 1,
@@ -55,7 +58,11 @@ describe('BookService', () => {
         search: 'test'
       });
 
-      expect(mockBookRepository.findAll).toHaveBeenCalledWith({
+      expect(mockBookRepository.findAll).toHaveBeenCalledWith(
+        { category: 'Tiểu đệ tử', search: 'test' },
+        { page: 1, limit: 10 }
+      );
+      expect(mockBookRepository.countAll).toHaveBeenCalledWith({
         category: 'Tiểu đệ tử',
         search: 'test'
       });

@@ -1,7 +1,7 @@
 import Book from '../models/book.model.js';
 
 const bookRepository = {
-  async findAll(filters = {}) {
+  _buildQuery(filters = {}) {
     const query = { isActive: true };
 
     // Category filter
@@ -21,7 +21,23 @@ const bookRepository = {
       query.$text = { $search: filters.search };
     }
 
-    return await Book.find(query).sort({ createdAt: -1 });
+    return query;
+  },
+
+  async findAll(filters = {}, pagination = {}) {
+    const query = this._buildQuery(filters);
+    const { page = 1, limit = 10 } = pagination;
+    const skip = (page - 1) * limit;
+
+    return await Book.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+  },
+
+  async countAll(filters = {}) {
+    const query = this._buildQuery(filters);
+    return await Book.countDocuments(query);
   },
 
   async findById(id) {
