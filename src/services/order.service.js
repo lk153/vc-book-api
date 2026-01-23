@@ -1,8 +1,17 @@
 import orderRepository from '../repositories/order.repository.js';
+import userRepository from '../repositories/user.repository.js';
 import cartService from './cart.service.js';
 import bookService from './book.service.js';
 import config from '../config/config.js';
 import ApiError from '../utils/ApiError.js';
+import logger from '../utils/logger.js';
+import { BrevoEmailService } from '../infrastructure/email/brevoEmailService.js';
+import { SendOrderConfirmation } from '../infrastructure/email/sendOrderConfirmation.js';
+import { SendOrderStatusNotification } from '../infrastructure/email/sendOrderStatusNotification.js';
+
+const emailService = new BrevoEmailService();
+const sendOrderConfirmation = new SendOrderConfirmation(emailService);
+const sendOrderStatusNotification = new SendOrderStatusNotification(emailService);
 
 const orderService = {
   async placeOrder(orderData) {
@@ -64,10 +73,21 @@ const orderService = {
     for (const item of cart.items) {
       await bookService.reduceStock(item.bookId, item.quantity);
     }
-    
+
     // Clear cart
     await cartService.clearCart(userId);
-    
+
+    // Send order confirmation email (non-blocking, log errors)
+    try {
+      const user = await userRepository.findById(userId);
+      if (user && user.email) {
+        await sendOrderConfirmation.execute(user.email, order);
+        logger.info(`Order confirmation email sent for order ${order.orderNumber}`);
+      }
+    } catch (emailError) {
+      logger.error(`Failed to send order confirmation email for order ${order.orderNumber}: ${emailError.message}`);
+    }
+
     return order;
   },
   
@@ -85,15 +105,30 @@ const orderService = {
   
   async updateOrderStatus(orderId, status) {
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
-    
+
     if (!validStatuses.includes(status)) {
       throw new ApiError(400, 'Invalid order status');
     }
-    
+
     const order = await orderRepository.updateStatus(orderId, status);
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
+
+    // Send status notification email (non-blocking, log errors)
+    // Skip 'pending' as order confirmation email handles that
+    if (status !== 'pending') {
+      try {
+        const user = await userRepository.findById(order.userId);
+        if (user && user.email) {
+          await sendOrderStatusNotification.execute(user.email, order, status);
+          logger.info(`Order status notification sent for order ${order.orderNumber} (status: ${status})`);
+        }
+      } catch (emailError) {
+        logger.error(`Failed to send order status notification for order ${order.orderNumber}: ${emailError.message}`);
+      }
+    }
+
     return order;
   },
   

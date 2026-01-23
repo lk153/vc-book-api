@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import config from './src/config/config.js';
 import connectDB from './src/config/database.js';
 import swaggerSpec from './src/config/swagger.js';
@@ -105,11 +106,14 @@ app.get('/', (req, res) => {
 
 // Health check
 app.get('/health', (req, res) => {
+  const dbStates = ['Disconnected', 'Connected', 'Connecting', 'Disconnecting'];
+  const dbState = mongoose.connection.readyState;
+
   res.json({
-    status: 'OK',
+    status: dbState === 1 ? 'OK' : 'Degraded',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    database: 'Connected'
+    database: dbStates[dbState] || 'Unknown'
   });
 });
 

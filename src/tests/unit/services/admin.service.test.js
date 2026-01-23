@@ -65,7 +65,8 @@ const mockUserModel = {
   countDocuments: jest.fn(),
   find: jest.fn(),
   findById: jest.fn(),
-  findByIdAndUpdate: jest.fn()
+  findByIdAndUpdate: jest.fn(),
+  aggregate: jest.fn()
 };
 
 const mockOrderModel = {
@@ -415,22 +416,17 @@ describe('AdminService', () => {
 
   describe('getAllUsers', () => {
     it('should return paginated users with order counts', async () => {
-      const mockUsers = [
-        createTestUser({ _id: 'user1' }),
-        createTestUser({ _id: 'user2' })
+      const mockUser1 = createTestUser({ _id: 'user1' });
+      const mockUser2 = createTestUser({ _id: 'user2' });
+
+      // Aggregation returns users with ordersCount already computed
+      const mockAggregationResult = [
+        { ...mockUser1, ordersCount: 5 },
+        { ...mockUser2, ordersCount: 3 }
       ];
 
       mockUserModel.countDocuments.mockResolvedValue(50);
-      mockUserModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue(mockUsers)
-          })
-        })
-      });
-      mockOrderModel.countDocuments
-        .mockResolvedValueOnce(5)
-        .mockResolvedValueOnce(3);
+      mockUserModel.aggregate.mockResolvedValue(mockAggregationResult);
 
       const result = await adminService.getAllUsers({ page: 1, limit: 10 });
 
@@ -438,35 +434,26 @@ describe('AdminService', () => {
       expect(result.users[0].ordersCount).toBe(5);
       expect(result.users[1].ordersCount).toBe(3);
       expect(result.pagination.total).toBe(50);
+      expect(mockUserModel.aggregate).toHaveBeenCalled();
     });
 
     it('should filter users by search term', async () => {
-      const mockUsers = [createTestUser({ name: 'John' })];
+      const mockUser = createTestUser({ name: 'John' });
+      const mockAggregationResult = [{ ...mockUser, ordersCount: 2 }];
 
       mockUserModel.countDocuments.mockResolvedValue(1);
-      mockUserModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue(mockUsers)
-          })
-        })
-      });
-      mockOrderModel.countDocuments.mockResolvedValue(2);
+      mockUserModel.aggregate.mockResolvedValue(mockAggregationResult);
 
       const result = await adminService.getAllUsers({ page: 1, limit: 10, search: 'John' });
 
       expect(result.users).toHaveLength(1);
+      // Verify aggregation pipeline contains $match with search regex
+      expect(mockUserModel.aggregate).toHaveBeenCalled();
     });
 
     it('should use default pagination values', async () => {
       mockUserModel.countDocuments.mockResolvedValue(0);
-      mockUserModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockResolvedValue([])
-          })
-        })
-      });
+      mockUserModel.aggregate.mockResolvedValue([]);
 
       const result = await adminService.getAllUsers({});
 

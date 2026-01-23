@@ -72,8 +72,9 @@ const userSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Index for performance
+// Indexes for performance
 userSchema.index({ createdAt: -1 });
+userSchema.index({ role: 1, createdAt: -1 }); // For admin user listing (filter by role, sort by createdAt)
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

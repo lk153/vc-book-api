@@ -122,6 +122,7 @@ const orderSchema = new mongoose.Schema({
 // Indexes
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
+orderSchema.index({ createdAt: -1 }); // For admin listing without status filter
 
 // Generate order number
 orderSchema.pre('save', async function(next) {

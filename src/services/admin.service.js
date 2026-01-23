@@ -156,32 +156,53 @@ const adminService = {
     const { page = 1, limit = 10, search } = filters;
 
     const User = (await import('../models/user.model.js')).default;
-    const Order = (await import('../models/order.model.js')).default;
 
-    const query = { role: 'customer' };
+    const matchQuery = { role: 'customer' };
     if (search) {
-      query.$or = [
+      matchQuery.$or = [
         { name: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } }
       ];
     }
 
-    const total = await User.countDocuments(query);
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    // Get total count for pagination
+    const total = await User.countDocuments(matchQuery);
 
-    // Get order counts for each user
-    const usersWithOrderCount = await Promise.all(
-      users.map(async (user) => {
-        const ordersCount = await Order.countDocuments({ userId: user._id });
-        return { user, ordersCount };
-      })
-    );
+    // Use aggregation with $lookup to get users and order counts in single query
+    const usersWithOrderCount = await User.aggregate([
+      { $match: matchQuery },
+      { $sort: { createdAt: -1 } },
+      { $skip: (page - 1) * limit },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'orders',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'orders'
+        }
+      },
+      {
+        $addFields: {
+          ordersCount: { $size: '$orders' }
+        }
+      },
+      {
+        $project: {
+          orders: 0,
+          password: 0
+        }
+      }
+    ]);
+
+    // Transform to match expected format { user, ordersCount }
+    const users = usersWithOrderCount.map(userData => {
+      const { ordersCount, ...user } = userData;
+      return { user, ordersCount };
+    });
 
     return {
-      users: usersWithOrderCount,
+      users,
       pagination: {
         page,
         limit,
