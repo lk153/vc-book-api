@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import config from '../../config/config.js';
 
 export const createBookSchema = Joi.object({
   title: Joi.string()
@@ -37,11 +36,10 @@ export const createBookSchema = Joi.object({
       'number.integer': 'Số lượng tồn kho phải là số nguyên'
     }),
   category: Joi.string()
-    .valid(...config.book.categories)
-    .required()
+    .max(100)
+    .allow(null, '')
     .messages({
-      'any.only': 'Danh mục không hợp lệ',
-      'any.required': 'Danh mục là bắt buộc'
+      'string.max': 'Danh mục không được vượt quá 100 ký tự'
     }),
   image: Joi.string()
     .messages({
@@ -91,9 +89,10 @@ export const updateBookSchema = Joi.object({
       'number.integer': 'Số lượng tồn kho phải là số nguyên'
     }),
   category: Joi.string()
-    .valid(...config.book.categories)
+    .max(100)
+    .allow(null, '')
     .messages({
-      'any.only': 'Danh mục không hợp lệ'
+      'string.max': 'Danh mục không được vượt quá 100 ký tự'
     }),
   image: Joi.string(),
   coverImage: Joi.string(),

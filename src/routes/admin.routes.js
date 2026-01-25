@@ -1,5 +1,6 @@
 import express from 'express';
 import adminController from '../controllers/admin.controller.js';
+import categoryController from '../controllers/category.controller.js';
 import { authenticateAdmin } from '../middleware/adminAuth.js';
 import { validateBody, validateParams, validateQuery } from '../middleware/validate.js';
 import {
@@ -9,6 +10,12 @@ import {
   adminListQuerySchema,
   objectIdParamSchema
 } from '../middleware/schemas/admin.schema.js';
+import {
+  createCategorySchema,
+  updateCategorySchema,
+  categoryIdParamSchema,
+  categoryListQuerySchema
+} from '../middleware/schemas/category.schema.js';
 
 const adminRoutes = express.Router();
 
@@ -367,5 +374,161 @@ adminRoutes.post(
  *         description: List of books
  */
 adminRoutes.get('/books', authenticateAdmin, validateQuery(adminListQuerySchema), adminController.getAllBooks);
+
+// ==================== Categories ====================
+
+/**
+ * @swagger
+ * /admin/categories:
+ *   get:
+ *     summary: Get all categories (admin view)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 20
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of categories with metadata
+ */
+adminRoutes.get('/categories', authenticateAdmin, validateQuery(categoryListQuerySchema), categoryController.getAllCategoriesAdmin);
+
+/**
+ * @swagger
+ * /admin/categories/{categoryId}:
+ *   get:
+ *     summary: Get category details (admin)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category details with metadata
+ *       404:
+ *         description: Category not found
+ */
+adminRoutes.get('/categories/:categoryId', authenticateAdmin, validateParams(categoryIdParamSchema), categoryController.getCategoryByIdAdmin);
+
+/**
+ * @swagger
+ * /admin/categories:
+ *   post:
+ *     summary: Create a new category
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 maxLength: 100
+ *               description:
+ *                 type: string
+ *                 maxLength: 500
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *       400:
+ *         description: Validation error
+ *       409:
+ *         description: Category name already exists
+ */
+adminRoutes.post('/categories', authenticateAdmin, validateBody(createCategorySchema), categoryController.createCategory);
+
+/**
+ * @swagger
+ * /admin/categories/{categoryId}:
+ *   put:
+ *     summary: Update a category
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 maxLength: 100
+ *               description:
+ *                 type: string
+ *                 maxLength: 500
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ *       404:
+ *         description: Category not found
+ *       409:
+ *         description: Category name already exists
+ */
+adminRoutes.put(
+  '/categories/:categoryId',
+  authenticateAdmin,
+  validateParams(categoryIdParamSchema),
+  validateBody(updateCategorySchema),
+  categoryController.updateCategory
+);
+
+/**
+ * @swagger
+ * /admin/categories/{categoryId}:
+ *   delete:
+ *     summary: Delete a category
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ *       404:
+ *         description: Category not found
+ */
+adminRoutes.delete(
+  '/categories/:categoryId',
+  authenticateAdmin,
+  validateParams(categoryIdParamSchema),
+  categoryController.deleteCategory
+);
 
 export default adminRoutes;

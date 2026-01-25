@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import config from '../config/config.js';
 
 const bookSchema = new mongoose.Schema({
   title: {
@@ -31,11 +30,8 @@ const bookSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: [true, 'Category is required'],
-    enum: {
-      values: config.book.categories,
-      message: '{VALUE} is not a valid category'
-    }
+    trim: true,
+    default: null
   },
   image: {
     type: String,
