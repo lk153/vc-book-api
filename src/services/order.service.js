@@ -4,6 +4,7 @@ import cartService from './cart.service.js';
 import bookService from './book.service.js';
 import config from '../config/config.js';
 import ApiError from '../utils/ApiError.js';
+import ERROR_MESSAGES from '../utils/errorMessages.js';
 import logger from '../utils/logger.js';
 import { BrevoEmailService } from '../infrastructure/email/brevoEmailService.js';
 import { SendOrderConfirmation } from '../infrastructure/email/sendOrderConfirmation.js';
@@ -21,14 +22,14 @@ const orderService = {
     const cart = await cartService.getCart(userId);
     
     if (!cart.items || cart.items.length === 0) {
-      throw new ApiError(400, 'Giỏ hàng trống');
+      throw new ApiError(400, ERROR_MESSAGES.ORDER.CART_EMPTY);
     }
-    
+
     // Validate stock for all items
     for (const item of cart.items) {
       const hasStock = await bookService.checkStock(item.bookId, item.quantity);
       if (!hasStock) {
-        throw new ApiError(400, `Không đủ số lượng trong kho: ${item.title}`);
+        throw new ApiError(400, ERROR_MESSAGES.ORDER.INSUFFICIENT_STOCK(item.title));
       }
     }
     
@@ -94,7 +95,7 @@ const orderService = {
   async getOrderById(orderId) {
     const order = await orderRepository.findById(orderId);
     if (!order) {
-      throw new ApiError(404, 'Đơn hàng không tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.ORDER.NOT_FOUND);
     }
     return order;
   },
@@ -107,12 +108,12 @@ const orderService = {
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
 
     if (!validStatuses.includes(status)) {
-      throw new ApiError(400, 'Invalid order status');
+      throw new ApiError(400, ERROR_MESSAGES.ORDER.INVALID_STATUS);
     }
 
     const order = await orderRepository.updateStatus(orderId, status);
     if (!order) {
-      throw new ApiError(404, 'Order not found');
+      throw new ApiError(404, ERROR_MESSAGES.ORDER.NOT_FOUND);
     }
 
     // Send status notification email (non-blocking, log errors)
@@ -136,7 +137,7 @@ const orderService = {
     const order = await this.getOrderById(orderId);
     
     if (order.status !== 'pending') {
-      throw new ApiError(400, 'Only pending orders can be cancelled');
+      throw new ApiError(400, ERROR_MESSAGES.ORDER.ONLY_PENDING_CAN_CANCEL);
     }
     
     // Restore stock

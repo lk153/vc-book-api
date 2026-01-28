@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import userRepository from '../repositories/user.repository.js';
 import ApiError from '../utils/ApiError.js';
+import ERROR_MESSAGES from '../utils/errorMessages.js';
 import config from '../config/config.js';
 import { BrevoEmailService } from '../infrastructure/email/brevoEmailService.js';
 import { SendResetPassword } from '../infrastructure/email/sendResetPassword.js';
@@ -23,7 +24,7 @@ const authService = {
         // Check if user already exists
         const existingUser = await userRepository.findByEmail(email);
         if (existingUser) {
-            throw new ApiError(400, 'Email đã được đăng ký');
+            throw new ApiError(400, ERROR_MESSAGES.AUTH.EMAIL_ALREADY_EXISTS);
         }
 
         // Create user
@@ -49,23 +50,23 @@ const authService = {
         const user = await userRepository.findByEmail(email);
 
         if (!user) {
-            throw new ApiError(401, 'Email hoặc mật khẩu không đúng');
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
         }
 
         // Check if user is active
         if (!user.isActive) {
-            throw new ApiError(401, 'Tài khoản đã bị vô hiệu hóa');
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.ACCOUNT_DISABLED);
         }
 
         // Check if user is banned
         if (user.banned) {
-            throw new ApiError(403, 'Tài khoản của bạn đã bị cấm');
+            throw new ApiError(403, ERROR_MESSAGES.AUTH.ACCOUNT_BANNED);
         }
 
         // Verify password
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
-            throw new ApiError(401, 'Email hoặc mật khẩu không đúng');
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
         }
 
         // Update last login
@@ -85,7 +86,7 @@ const authService = {
         const user = await userRepository.findById(userId);
 
         if (!user) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         return user.toPublicJSON();
@@ -98,7 +99,7 @@ const authService = {
         // Check if user exists
         const existingUser = await userRepository.findByEmail(email);
         if (existingUser) {
-            throw new ApiError(400, 'Email ' + email + ' đã tồn tại');
+            throw new ApiError(400, ERROR_MESSAGES.AUTH.EMAIL_EXISTS(email));
         }
 
         // Don't allow email or password update through this method
@@ -107,7 +108,7 @@ const authService = {
         const user = await userRepository.update(userId, allowedUpdates);
 
         if (!user) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         return user.toPublicJSON();
@@ -119,20 +120,20 @@ const authService = {
         const userById = await userRepository.findById(userId);
 
         if (!userById) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         // Get user with password field
         const user = await userRepository.findByEmail(userById.email);
 
         if (!user) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         // Verify old password
         const isPasswordValid = await user.comparePassword(oldPassword);
         if (!isPasswordValid) {
-            throw new ApiError(401, 'Mật khẩu hiện tại không đúng');
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.WRONG_PASSWORD);
         }
 
         // Hash new password
@@ -156,7 +157,7 @@ const authService = {
         try {
             return jwt.verify(token, config.jwt.secret);
         } catch (error) {
-            throw new ApiError(401, 'Token không hợp lệ hoặc đã hết hạn', error);
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.INVALID_TOKEN, error);
         }
     },
 
@@ -166,7 +167,7 @@ const authService = {
         const user = await userRepository.findByEmail(email);
 
         if (!user) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         // Create a short-lived reset token
@@ -196,12 +197,12 @@ const authService = {
         try {
             const payload = jwt.verify(token, config.jwt.secret);
             if (payload.type !== 'reset') {
-                throw new ApiError(401, 'Token đặt lại không hợp lệ');
+                throw new ApiError(401, ERROR_MESSAGES.AUTH.INVALID_RESET_TOKEN);
             }
             return payload;
         } catch (error) {
             if (error instanceof ApiError) throw error;
-            throw new ApiError(401, 'Token đặt lại không hợp lệ hoặc đã hết hạn');
+            throw new ApiError(401, ERROR_MESSAGES.AUTH.RESET_TOKEN_EXPIRED);
         }
     },
 
@@ -214,7 +215,7 @@ const authService = {
 
         const user = await userRepository.findById(userId);
         if (!user) {
-            throw new ApiError(404, 'Người dùng không được tìm thấy');
+            throw new ApiError(404, ERROR_MESSAGES.AUTH.USER_NOT_FOUND);
         }
 
         // Hash new password

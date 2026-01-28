@@ -1,5 +1,6 @@
 import categoryRepository from '../repositories/category.repository.js';
 import ApiError from '../utils/ApiError.js';
+import ERROR_MESSAGES from '../utils/errorMessages.js';
 
 const categoryService = {
   // ==================== Public Methods ====================
@@ -13,7 +14,7 @@ const categoryService = {
   async getCategoryById(id) {
     const category = await categoryRepository.findById(id);
     if (!category || !category.isActive) {
-      throw new ApiError(404, 'Danh mục không được tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.CATEGORY.NOT_FOUND);
     }
     return category;
   },
@@ -57,7 +58,7 @@ const categoryService = {
   async getCategoryByIdAdmin(id) {
     const category = await categoryRepository.findById(id);
     if (!category) {
-      throw new ApiError(404, 'Danh mục không được tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.CATEGORY.NOT_FOUND);
     }
 
     // Get book count
@@ -73,7 +74,7 @@ const categoryService = {
     // Check if category name already exists
     const exists = await categoryRepository.existsByName(categoryData.name);
     if (exists) {
-      throw new ApiError(409, 'Danh mục với tên này đã tồn tại');
+      throw new ApiError(409, ERROR_MESSAGES.CATEGORY.NAME_EXISTS);
     }
 
     const category = await categoryRepository.create(categoryData);
@@ -87,14 +88,14 @@ const categoryService = {
     // Check if category exists
     const existingCategory = await categoryRepository.findById(id);
     if (!existingCategory) {
-      throw new ApiError(404, 'Danh mục không được tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.CATEGORY.NOT_FOUND);
     }
 
     // If name is being changed, check for duplicates
     if (categoryData.name && categoryData.name !== existingCategory.name) {
       const exists = await categoryRepository.existsByName(categoryData.name, id);
       if (exists) {
-        throw new ApiError(409, 'Danh mục với tên này đã tồn tại');
+        throw new ApiError(409, ERROR_MESSAGES.CATEGORY.NAME_EXISTS);
       }
     }
 
@@ -112,12 +113,12 @@ const categoryService = {
   async deleteCategory(id) {
     const category = await categoryRepository.findById(id);
     if (!category) {
-      throw new ApiError(404, 'Danh mục không được tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.CATEGORY.NOT_FOUND);
     }
 
     const deleted = await categoryRepository.delete(id);
     if (!deleted) {
-      throw new ApiError(500, 'Không thể xóa danh mục');
+      throw new ApiError(500, ERROR_MESSAGES.CATEGORY.DELETE_FAILED);
     }
 
     return true;

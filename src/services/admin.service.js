@@ -4,6 +4,7 @@ import userRepository from '../repositories/user.repository.js';
 import bookRepository from '../repositories/book.repository.js';
 import orderRepository from '../repositories/order.repository.js';
 import ApiError from '../utils/ApiError.js';
+import ERROR_MESSAGES from '../utils/errorMessages.js';
 import config from '../config/config.js';
 import { BrevoEmailService } from '../infrastructure/email/brevoEmailService.js';
 import { SendResetPassword } from '../infrastructure/email/sendResetPassword.js';
@@ -18,12 +19,12 @@ const adminService = {
     const admin = await adminRepository.findByUsername(username);
 
     if (!admin || !admin.isActive) {
-      throw new ApiError(401, 'Invalid credentials');
+      throw new ApiError(401, ERROR_MESSAGES.ADMIN.INVALID_CREDENTIALS);
     }
 
     const isMatch = await admin.comparePassword(password);
     if (!isMatch) {
-      throw new ApiError(401, 'Invalid credentials');
+      throw new ApiError(401, ERROR_MESSAGES.ADMIN.INVALID_CREDENTIALS);
     }
 
     // Update last login
@@ -42,7 +43,7 @@ const adminService = {
   async getAdminById(adminId) {
     const admin = await adminRepository.findById(adminId);
     if (!admin) {
-      throw new ApiError(401, 'Unauthorized');
+      throw new ApiError(401, ERROR_MESSAGES.ADMIN.UNAUTHORIZED);
     }
     return admin;
   },
@@ -124,7 +125,7 @@ const adminService = {
       .populate('items.book', 'title image');
 
     if (!order) {
-      throw new ApiError(404, 'Order not found');
+      throw new ApiError(404, ERROR_MESSAGES.ORDER.NOT_FOUND);
     }
 
     return order;
@@ -137,7 +138,7 @@ const adminService = {
 
     const order = await Order.findById(orderId);
     if (!order) {
-      throw new ApiError(404, 'Order not found');
+      throw new ApiError(404, ERROR_MESSAGES.ORDER.NOT_FOUND);
     }
 
     // Add status history entry
@@ -218,7 +219,7 @@ const adminService = {
 
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(404, 'User not found');
+      throw new ApiError(404, ERROR_MESSAGES.USER.NOT_FOUND);
     }
 
     const ordersCount = await Order.countDocuments({ userId: user._id });
@@ -236,7 +237,7 @@ const adminService = {
     );
 
     if (!user) {
-      throw new ApiError(404, 'User not found');
+      throw new ApiError(404, ERROR_MESSAGES.USER.NOT_FOUND);
     }
 
     return user;
@@ -247,7 +248,7 @@ const adminService = {
 
     const user = await User.findById(userId);
     if (!user) {
-      throw new ApiError(404, 'User not found');
+      throw new ApiError(404, ERROR_MESSAGES.USER.NOT_FOUND);
     }
 
     // Generate reset token
@@ -270,7 +271,7 @@ const adminService = {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-      throw new ApiError(500, 'Failed to send password reset email');
+      throw new ApiError(500, ERROR_MESSAGES.ADMIN.FAILED_SEND_EMAIL);
     }
 
     return true;

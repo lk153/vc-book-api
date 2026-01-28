@@ -1,6 +1,7 @@
 import cartRepository from '../repositories/cart.repository.js';
 import bookService from './book.service.js';
 import ApiError from '../utils/ApiError.js';
+import ERROR_MESSAGES from '../utils/errorMessages.js';
 
 const cartService = {
   async getCart(userId) {
@@ -13,7 +14,7 @@ const cartService = {
     const book = await bookService.getBookById(bookId);
     
     if (quantity > book.stock) {
-      throw new ApiError(400, `Chỉ ${book.stock} sản phẩm có sẵn trong kho`);
+      throw new ApiError(400, ERROR_MESSAGES.CART.INSUFFICIENT_STOCK(book.stock));
     }
     
     let cart = await cartRepository.findByUserId(userId);
@@ -64,15 +65,15 @@ const cartService = {
     const cart = await cartRepository.findByUserId(userId);
     
     if (!cart) {
-      throw new ApiError(404, 'Giỏ hàng không được tìm thấy');
+      throw new ApiError(404, ERROR_MESSAGES.CART.NOT_FOUND);
     }
-    
+
     const itemIndex = cart.items.findIndex(item => item.bookId === bookId);
-    
+
     if (itemIndex === -1) {
-      throw new ApiError(404, 'Sản phẩm không có trong giỏ hàng');
+      throw new ApiError(404, ERROR_MESSAGES.CART.ITEM_NOT_FOUND);
     }
-    
+
     if (quantity === 0) {
       // Remove item
       cart.items.splice(itemIndex, 1);
@@ -80,7 +81,7 @@ const cartService = {
       // Validate stock
       const book = await bookService.getBookById(bookId);
       if (quantity > book.stock) {
-        throw new ApiError(400, `Chỉ ${book.stock} sản phẩm có sẵn trong kho`);
+        throw new ApiError(400, ERROR_MESSAGES.CART.INSUFFICIENT_STOCK(book.stock));
       }
       cart.items[itemIndex].quantity = quantity;
     }
